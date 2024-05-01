@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["croppedImage"])) {
 
     // Move the uploaded file to the specified directory with the new file name
     if (move_uploaded_file($_FILES["croppedImage"]["tmp_name"], $target_file)) {
-        echo $target_file;
+        echo $newFileName;
     } else {
         echo "Sorry, there was an error uploading your file.";
     }

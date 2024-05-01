@@ -9,25 +9,32 @@
 </head>
 
 <body>
-    <input type="file" id="inputImage" accept="image/*">
-    <input type="text" id="fileUploaded">
-    <div>
-        <button id="cropButton">Crop Image</button>
-    </div>
-    <div>
-        <canvas id="outputImage"></canvas>
-        <img id="resultImage" src="" alt="Cropped Image">
-    </div>
+
+    <form action="insert.php" method="post">
+        <input type="file" id="inputImage" accept="image/*">
+        <input type="text" name="nama">
+        <input type="text" id="fileUploaded" name="foto">
+        <div>
+            <canvas id="outputImage"></canvas>
+            <img id="resultImage" src="" alt="Cropped Image">
+        </div>
+        <div>
+            <button type="button" id="cropButton">Crop Image</button>
+        </div>
+
+        <button class="btn btn-success" type="submit">Kirim</button>
+    </form>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
-        // Function to handle file selection and initialize cropper
         function handleFileSelect(event) {
             const input = event.target;
             if (!input.files || !input.files[0]) {
                 return;
             }
+
+            console.log(input);
 
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -38,12 +45,19 @@
                     canvas.width = image.width;
                     canvas.height = image.height;
                     ctx.drawImage(image, 0, 0, image.width, image.height);
+
+                    // Destroy previous Cropper instance if exists
+                    if (window.cropper) {
+                        window.cropper.destroy();
+                    }
+
                     const cropper = new Cropper(canvas, {
                         zoomable: true,
                         rotatable: true,
                         movable: true,
                         cropBoxResizable: true
                     });
+
                     $('#cropButton').on('click', function() {
                         const croppedCanvas = cropper.getCroppedCanvas();
                         // Convert cropped canvas to a Blob object
@@ -61,7 +75,6 @@
                                 processData: false,
                                 contentType: false,
                                 success: function(response) {
-                                    // console.log(response);
                                     $('#fileUploaded').val(response);
                                     // You can handle the response here if needed
                                     $('#resultImage').attr('src', response);
